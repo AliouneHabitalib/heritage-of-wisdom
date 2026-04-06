@@ -39,40 +39,61 @@ serve(async (req) => {
       .select()
       .single();
 
-    if (orderError) throw orderError;
+    if (orderError) {
+      console.error("Order creation error:", orderError);
+      throw orderError;
+    }
 
-    // Get the project URL for callbacks
+    console.log("Order created:", order.id);
+
     const siteUrl = req.headers.get("origin") || "https://heritage-of-wisdom.lovable.app";
 
-    // Call PayTech API
+    // PayTech expects form-urlencoded body with API keys in headers
+    const formData = new URLSearchParams();
+    formData.append("item_name", "La Sagesse d'une Mère - L'Héritage d'une Vie (PDF)");
+    formData.append("item_price", "5000");
+    formData.append("currency", "XOF");
+    formData.append("ref_command", order.id);
+    formData.append("command_name", `Livre - ${order.id}`);
+    formData.append("env", "test");
+    formData.append("success_url", `${siteUrl}/paiement-succes?ref=${order.id}`);
+    formData.append("cancel_url", `${siteUrl}/#offre`);
+    formData.append("ipn_url", `${SUPABASE_URL}/functions/v1/payment-webhook`);
+    formData.append("custom_field", JSON.stringify({ order_id: order.id, email }));
+
+    console.log("Calling PayTech API...");
+
     const paymentResponse = await fetch("https://paytech.sn/api/payment/request-payment", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        API_KEY: PAYTECH_API_KEY,
-        API_SECRET: PAYTECH_API_SECRET,
+        "Content-Type": "application/x-www-form-urlencoded",
+        "API_KEY": PAYTECH_API_KEY,
+        "API_SECRET": PAYTECH_API_SECRET,
       },
-      body: JSON.stringify({
-        item_name: "La Sagesse d'une Mère - L'Héritage d'une Vie (PDF)",
-        item_price: 5000,
-        currency: "XOF",
-        ref_command: order.id,
-        command_name: `Livre - ${order.id}`,
-        env: "prod",
-        success_url: `${siteUrl}/paiement-succes?ref=${order.id}`,
-        cancel_url: `${siteUrl}/#offre`,
-        ipn_url: `${SUPABASE_URL}/functions/v1/payment-webhook`,
-        custom_field: JSON.stringify({ order_id: order.id, email }),
-      }),
+      body: formData.toString(),
     });
 
-    const paymentData = await paymentResponse.json();
+    const responseText = await paymentResponse.text();
+    console.log("PayTech response status:", paymentResponse.status);
+    console.log("PayTech response:", responseText);
 
-    if (!paymentResponse.ok) {
-      throw new Error(`PayTech error: ${JSON.stringify(paymentData)}`);
+    let paymentData;
+    try {
+      paymentData = JSON.parse(responseText);
+    } catch {
+      throw new Error(`PayTech returned non-JSON: ${responseText}`);
     }
 
-    // Update order with payment ref
+    if (paymentData.success !== 1 && paymentData.success !== true && !paymentData.redirect_url) {
+      return new Response(JSON.stringify({
+        error: paymentData.message || "Erreur PayTech",
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Update order with payment token
     if (paymentData.token) {
       await supabase
         .from("orders")
