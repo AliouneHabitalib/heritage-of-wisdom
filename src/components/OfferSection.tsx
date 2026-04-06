@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Download, Gift, BookOpen } from "lucide-react";
-import bookBanner from "@/assets/oumy-banner2.png";
+import bookBanner from "@/assets/oumy-banner2.jpeg";
 
 const OfferSection = () => {
   return (
