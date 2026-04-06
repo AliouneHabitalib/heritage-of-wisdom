@@ -24,9 +24,15 @@ const OfferSection = () => {
 
       if (error) throw error;
 
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+
       if (data?.redirect_url) {
         window.location.href = data.redirect_url;
       } else {
+        console.error("PayTech response:", data);
         toast.error("Erreur lors de la redirection vers le paiement");
       }
     } catch (err: any) {
