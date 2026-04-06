@@ -20,7 +20,7 @@ const AuthorSection = () => {
             <div className="divider-gold w-24 mx-auto" />
             <div className="space-y-4 text-cream/70 text-lg leading-relaxed">
               <p>
-                Héritier de cette histoire, Alioune Habitalib Coulibaly a choisi de mettre en mots ce que sa mère a transmis en actes.
+                Héritier de cette histoire, Alioune Habitalib Coulibaly a choisi de mettre en mots ce que sa grand-mère a transmis en actes.
               </p>
               <p>
                 À travers ce livre, il ne raconte pas seulement une vie — il transmet un message aux générations futures. Un message d'amour, de résilience et de foi.
