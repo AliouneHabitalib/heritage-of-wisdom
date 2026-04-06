@@ -17,11 +17,11 @@ const FooterSection = () => {
           <div>
             <h4 className="font-display text-cream mb-3">Contact</h4>
             <div className="space-y-2 text-cream/50 text-sm">
-              <a href="mailto:contact@lasagessedoumy.com" className="flex items-center gap-2 justify-center md:justify-start hover:text-gold transition-colors">
-                <Mail className="w-4 h-4" /> contact@lasagessedoumy.com
+              <a href="mailto:habitalibalioune.c95@gmail.com" className="flex items-center gap-2 justify-center md:justify-start hover:text-gold transition-colors">
+                <Mail className="w-4 h-4" /> habitalibalioune.c95@gmail.com
               </a>
-              <a href="https://wa.me/221770000000" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 justify-center md:justify-start hover:text-gold transition-colors">
-                <Phone className="w-4 h-4" /> WhatsApp
+              <a href="https://wa.me/221772292392" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 justify-center md:justify-start hover:text-gold transition-colors">
+                <Phone className="w-4 h-4" /> +221 77 229 23 92
               </a>
             </div>
           </div>
