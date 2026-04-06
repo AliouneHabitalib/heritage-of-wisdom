@@ -55,7 +55,7 @@ serve(async (req) => {
     formData.append("currency", "XOF");
     formData.append("ref_command", order.id);
     formData.append("command_name", `Livre - ${order.id}`);
-    formData.append("env", "prod");
+    formData.append("env", "test");
     formData.append("success_url", `${siteUrl}/paiement-succes?ref=${order.id}`);
     formData.append("cancel_url", `${siteUrl}/#offre`);
     formData.append("ipn_url", `${SUPABASE_URL}/functions/v1/payment-webhook`);
