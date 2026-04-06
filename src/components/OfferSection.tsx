@@ -1,8 +1,42 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Download, Gift, BookOpen } from "lucide-react";
+import { Download, Gift, BookOpen, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import bookBanner from "@/assets/oumy-banner2.jpeg";
 
 const OfferSection = () => {
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+
+  const handlePayment = async () => {
+    if (!email) {
+      toast.error("Veuillez entrer votre adresse email");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment", {
+        body: { email, name },
+      });
+
+      if (error) throw error;
+
+      if (data?.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else {
+        toast.error("Erreur lors de la redirection vers le paiement");
+      }
+    } catch (err: any) {
+      console.error("Payment error:", err);
+      toast.error("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section id="offre" className="py-24 lg:py-32 bg-gradient-warm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,22 +88,47 @@ const OfferSection = () => {
                   ))}
                 </ul>
 
-                <div className="pt-4">
-                  <div className="flex items-baseline gap-2 mb-6">
+                <div className="pt-4 space-y-3">
+                  <div className="flex items-baseline gap-2 mb-2">
                     <span className="text-4xl font-display font-bold text-primary">5 000 FCFA</span>
                     <span className="text-muted-foreground text-sm">(≈ 7,50 €)</span>
                   </div>
 
+                  <input
+                    type="text"
+                    placeholder="Votre nom (optionnel)"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg border border-primary/20 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+                  <input
+                    type="email"
+                    placeholder="Votre adresse email *"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-primary/20 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className="w-full py-4 px-8 text-lg font-display font-semibold bg-gradient-gold text-cream rounded-lg shadow-gold transition-all"
+                    onClick={handlePayment}
+                    disabled={loading}
+                    className="w-full py-4 px-8 text-lg font-display font-semibold bg-gradient-gold text-cream rounded-lg shadow-gold transition-all disabled:opacity-60"
                   >
-                    Acheter maintenant
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Redirection...
+                      </span>
+                    ) : (
+                      "Acheter maintenant"
+                    )}
                   </motion.button>
 
                   <p className="text-center text-muted-foreground text-sm mt-3">
-                    Paiement sécurisé · Téléchargement instantané
+                    Paiement sécurisé via PayTech · Mobile Money · Carte bancaire
                   </p>
                 </div>
               </div>
