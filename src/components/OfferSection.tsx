@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Download, Gift, BookOpen } from "lucide-react";
-import bookCover from "@/assets/oumy-cover.png";
+import bookBanner from "@/assets/oumy-banner2.png";
 
 const OfferSection = () => {
   return (
@@ -30,9 +30,9 @@ const OfferSection = () => {
             <div className="grid md:grid-cols-2 gap-10 items-center">
               <div className="flex justify-center">
                 <img
-                  src={bookCover}
+                  src={bookBanner}
                   alt="Couverture du livre"
-                  className="w-56 rounded-lg shadow-xl"
+                  className="w-full rounded-lg shadow-xl"
                 />
               </div>
 
