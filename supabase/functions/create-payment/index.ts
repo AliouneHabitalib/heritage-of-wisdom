@@ -84,8 +84,14 @@ serve(async (req) => {
       throw new Error(`PayTech returned non-JSON: ${responseText}`);
     }
 
-    if (paymentData.success !== 1 && paymentData.success !== true) {
-      throw new Error(`PayTech error: ${responseText}`);
+    if (paymentData.success !== 1 && paymentData.success !== true && !paymentData.redirect_url) {
+      return new Response(JSON.stringify({
+        error: `PayTech a retourné une erreur`,
+        details: paymentData,
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Update order with payment token
@@ -100,6 +106,7 @@ serve(async (req) => {
       success: true,
       redirect_url: paymentData.redirect_url,
       token: paymentData.token,
+      paytech_response: paymentData,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
