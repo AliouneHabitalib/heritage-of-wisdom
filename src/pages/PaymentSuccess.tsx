@@ -39,6 +39,13 @@ const PaymentSuccess = () => {
           if (data?.download_url) {
             setDownloadUrl(data.download_url);
             setStatus("success");
+            // Auto-trigger download
+            const link = document.createElement("a");
+            link.href = data.download_url;
+            link.download = "La-Sagesse-d-une-Mere.pdf";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
           } else {
             setStatus("success");
           }
