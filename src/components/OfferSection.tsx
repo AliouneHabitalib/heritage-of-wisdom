@@ -96,8 +96,8 @@ const OfferSection = () => {
 
                 <div className="pt-4 space-y-3">
                   <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-4xl font-display font-bold text-primary">5 000 FCFA</span>
-                    <span className="text-muted-foreground text-sm">(≈ 7,50 €)</span>
+                    <span className="text-4xl font-display font-bold text-primary">15 $</span>
+                    <span className="text-muted-foreground text-sm">(5 000 FCFA)</span>
                   </div>
 
                   <input
