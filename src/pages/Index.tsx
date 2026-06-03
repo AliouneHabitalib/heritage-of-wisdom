@@ -1,4 +1,5 @@
 import HeroSection from "@/components/HeroSection";
+import BannerShowcase from "@/components/BannerShowcase";
 import StorySection from "@/components/StorySection";
 import WhyBuySection from "@/components/WhyBuySection";
 import ExcerptSection from "@/components/ExcerptSection";
@@ -12,6 +13,7 @@ const Index = () => {
   return (
     <main>
       <HeroSection />
+      <BannerShowcase />
       <StorySection />
       <WhyBuySection />
       <ExcerptSection />
