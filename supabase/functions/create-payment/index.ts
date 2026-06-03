@@ -46,7 +46,9 @@ serve(async (req) => {
 
     console.log("Order created:", order.id);
 
-    const siteUrl = req.headers.get("origin") || "https://heritage-of-wisdom.lovable.app";
+    // Use a trusted, hardcoded site URL — never trust the Origin header.
+    const siteUrl = Deno.env.get("SITE_URL") || "https://heritage-of-wisdom.lovable.app";
+    const paytechEnv = Deno.env.get("PAYTECH_ENV") || "test";
 
     // PayTech expects form-urlencoded body with API keys in headers
     const formData = new URLSearchParams();
@@ -55,7 +57,7 @@ serve(async (req) => {
     formData.append("currency", "XOF");
     formData.append("ref_command", order.id);
     formData.append("command_name", `Livre - ${order.id}`);
-    formData.append("env", "test");
+    formData.append("env", paytechEnv);
     formData.append("success_url", `${siteUrl}/paiement-succes?ref=${order.id}`);
     formData.append("cancel_url", `${siteUrl}/#offre`);
     formData.append("ipn_url", `${SUPABASE_URL}/functions/v1/payment-webhook`);
@@ -111,7 +113,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Payment error:", error);
     return new Response(JSON.stringify({
-      error: error.message || "Erreur lors de la création du paiement",
+      error: "Une erreur est survenue lors de la création du paiement",
     }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
