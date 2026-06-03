@@ -18,14 +18,11 @@ const PaymentSuccess = () => {
 
     const checkOrder = async () => {
       try {
-        // Check order status
-        const { data: order } = await supabase
-          .from("orders")
-          .select("*")
-          .eq("id", orderRef)
-          .single();
+        const { data: order, error } = await supabase.functions.invoke("check-order-status", {
+          body: { order_id: orderRef },
+        });
 
-        if (!order) {
+        if (error || !order) {
           setStatus("error");
           return;
         }
