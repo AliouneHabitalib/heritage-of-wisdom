@@ -65,6 +65,16 @@ const PaymentSuccess = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <Helmet>
+        <title>Confirmation de commande — La Sagesse d'une Mère</title>
+        <meta name="description" content="Confirmation de votre commande du livre « La Sagesse d'une Mère, l'Héritage d'une Vie ». Téléchargez votre exemplaire numérique." />
+        <meta name="robots" content="noindex, follow" />
+        <link rel="canonical" href="https://heritage-of-wisdom.lovable.app/paiement-succes" />
+        <meta property="og:title" content="Confirmation de commande — La Sagesse d'une Mère" />
+        <meta property="og:description" content="Votre commande a bien été reçue. Téléchargez votre livre numérique." />
+        <meta property="og:url" content="https://heritage-of-wisdom.lovable.app/paiement-succes" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
