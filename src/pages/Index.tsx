@@ -59,18 +59,3 @@ const Index = () => {
 };
 
 export default Index;
-
-      <BannerShowcase />
-      <StorySection />
-      <WhyBuySection />
-      <ExcerptSection />
-      <ReviewsSection />
-      <OfferSection />
-      <AuthorSection />
-      <EmailCaptureSection />
-      <FooterSection />
-    </main>
-  );
-};
-
-export default Index;
