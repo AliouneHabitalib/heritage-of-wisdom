@@ -29,7 +29,8 @@ const PaymentSuccess = () => {
           });
         }
 
-      try {
+
+
         const { data: order, error } = await supabase.functions.invoke("check-order-status", {
           body: { order_id: orderRef },
         });
