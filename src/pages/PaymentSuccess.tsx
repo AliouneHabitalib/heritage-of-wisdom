@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const orderRef = searchParams.get("ref");
+  const provider = searchParams.get("provider");
+  const paypalToken = searchParams.get("token"); // PayPal returns the order id as "token"
   const [status, setStatus] = useState<"loading" | "success" | "pending" | "error">("loading");
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
@@ -20,9 +22,20 @@ const PaymentSuccess = () => {
 
     const checkOrder = async () => {
       try {
+        // If returning from PayPal, capture the payment first
+        if (provider === "paypal" && paypalToken) {
+          await supabase.functions.invoke("capture-paypal-order", {
+            body: { order_id: orderRef, paypal_order_id: paypalToken },
+          });
+        }
+
+
+
         const { data: order, error } = await supabase.functions.invoke("check-order-status", {
           body: { order_id: orderRef },
         });
+
+
 
         if (error || !order) {
           setStatus("error");
