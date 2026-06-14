@@ -6,20 +6,19 @@ import { toast } from "sonner";
 import bookBanner from "@/assets/oumy-banner2.jpeg";
 
 const OfferSection = () => {
-  const [loading, setLoading] = useState<null | "paytech" | "paypal">(null);
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
 
-  const handlePayment = async (provider: "paytech" | "paypal") => {
+  const handlePayment = async () => {
     if (!email) {
       toast.error("Veuillez entrer votre adresse email");
       return;
     }
 
-    setLoading(provider);
+    setLoading(true);
     try {
-      const fn = provider === "paytech" ? "create-payment" : "create-paypal-order";
-      const { data, error } = await supabase.functions.invoke(fn, {
+      const { data, error } = await supabase.functions.invoke("create-paypal-order", {
         body: { email, name },
       });
 
@@ -40,9 +39,10 @@ const OfferSection = () => {
       console.error("Payment error:", err);
       toast.error("Une erreur est survenue. Veuillez réessayer.");
     } finally {
-      setLoading(null);
+      setLoading(false);
     }
   };
+
 
 
   return (
@@ -98,8 +98,7 @@ const OfferSection = () => {
 
                 <div className="pt-4 space-y-3">
                   <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-4xl font-display font-bold text-primary">5 000 FCFA</span>
-                    <span className="text-base text-muted-foreground">/ 19,99 €</span>
+                    <span className="text-4xl font-display font-bold text-primary">19,99 €</span>
                   </div>
 
                   <input
@@ -118,45 +117,27 @@ const OfferSection = () => {
                     className="w-full px-4 py-3 rounded-lg border border-primary/20 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                   />
 
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() => handlePayment("paytech")}
-                      disabled={loading !== null}
-                      className="w-full py-4 px-6 text-base font-display font-semibold bg-gradient-gold text-cream rounded-lg shadow-gold transition-all disabled:opacity-60"
-                    >
-                      {loading === "paytech" ? (
-                        <span className="flex items-center justify-center gap-2">
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          Redirection...
-                        </span>
-                      ) : (
-                        "Payer avec PayTech"
-                      )}
-                    </motion.button>
-
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() => handlePayment("paypal")}
-                      disabled={loading !== null}
-                      className="w-full py-4 px-6 text-base font-display font-semibold bg-[#0070ba] hover:bg-[#005ea6] text-white rounded-lg shadow-md transition-all disabled:opacity-60"
-                    >
-                      {loading === "paypal" ? (
-                        <span className="flex items-center justify-center gap-2">
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          Redirection...
-                        </span>
-                      ) : (
-                        "Payer avec PayPal"
-                      )}
-                    </motion.button>
-                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={handlePayment}
+                    disabled={loading}
+                    className="w-full py-4 px-8 text-lg font-display font-semibold bg-[#0070ba] hover:bg-[#005ea6] text-white rounded-lg shadow-md transition-all disabled:opacity-60"
+                  >
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Redirection...
+                      </span>
+                    ) : (
+                      "Payer avec PayPal"
+                    )}
+                  </motion.button>
 
                   <p className="text-center text-muted-foreground text-sm mt-3">
-                    PayTech (Mobile Money / Carte · FCFA) ou PayPal (Carte · €)
+                    Paiement sécurisé via PayPal · Carte bancaire acceptée
                   </p>
+
 
                 </div>
               </div>
