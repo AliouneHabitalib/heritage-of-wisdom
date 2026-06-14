@@ -6,19 +6,20 @@ import { toast } from "sonner";
 import bookBanner from "@/assets/oumy-banner2.jpeg";
 
 const OfferSection = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<null | "paytech" | "paypal">(null);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
 
-  const handlePayment = async () => {
+  const handlePayment = async (provider: "paytech" | "paypal") => {
     if (!email) {
       toast.error("Veuillez entrer votre adresse email");
       return;
     }
 
-    setLoading(true);
+    setLoading(provider);
     try {
-      const { data, error } = await supabase.functions.invoke("create-payment", {
+      const fn = provider === "paytech" ? "create-payment" : "create-paypal-order";
+      const { data, error } = await supabase.functions.invoke(fn, {
         body: { email, name },
       });
 
@@ -32,16 +33,17 @@ const OfferSection = () => {
       if (data?.redirect_url) {
         window.location.href = data.redirect_url;
       } else {
-        console.error("PayTech response:", data);
+        console.error("Payment response:", data);
         toast.error("Erreur lors de la redirection vers le paiement");
       }
     } catch (err: any) {
       console.error("Payment error:", err);
       toast.error("Une erreur est survenue. Veuillez réessayer.");
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
+
 
   return (
     <section id="offre" className="py-24 lg:py-32 bg-gradient-warm">
