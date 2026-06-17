@@ -6,19 +6,20 @@ import { toast } from "sonner";
 import bookBanner from "@/assets/oumy-banner2.jpeg";
 
 const OfferSection = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<null | "paypal" | "paydunya">(null);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
 
-  const handlePayment = async () => {
+  const startPayment = async (provider: "paypal" | "paydunya") => {
     if (!email) {
       toast.error("Veuillez entrer votre adresse email");
       return;
     }
 
-    setLoading(true);
+    setLoading(provider);
     try {
-      const { data, error } = await supabase.functions.invoke("create-paypal-order", {
+      const fn = provider === "paypal" ? "create-paypal-order" : "create-paydunya-invoice";
+      const { data, error } = await supabase.functions.invoke(fn, {
         body: { email, name },
       });
 
@@ -39,7 +40,7 @@ const OfferSection = () => {
       console.error("Payment error:", err);
       toast.error("Une erreur est survenue. Veuillez réessayer.");
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 
@@ -97,8 +98,9 @@ const OfferSection = () => {
                 </ul>
 
                 <div className="pt-4 space-y-3">
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-4xl font-display font-bold text-primary">19,99 €</span>
+                  <div className="flex items-baseline gap-3 mb-2 flex-wrap">
+                    <span className="text-4xl font-display font-bold text-primary">5 000 FCFA</span>
+                    <span className="text-lg text-muted-foreground">/ 19,99 €</span>
                   </div>
 
                   <input
@@ -120,25 +122,40 @@ const OfferSection = () => {
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    onClick={handlePayment}
-                    disabled={loading}
-                    className="w-full py-4 px-8 text-lg font-display font-semibold bg-[#0070ba] hover:bg-[#005ea6] text-white rounded-lg shadow-md transition-all disabled:opacity-60"
+                    onClick={() => startPayment("paydunya")}
+                    disabled={loading !== null}
+                    className="w-full py-4 px-8 text-lg font-display font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-gold transition-all disabled:opacity-60"
                   >
-                    {loading ? (
+                    {loading === "paydunya" ? (
                       <span className="flex items-center justify-center gap-2">
                         <Loader2 className="w-5 h-5 animate-spin" />
                         Redirection...
                       </span>
                     ) : (
-                      "Payer avec PayPal"
+                      "Payer (Orange Money · Wave · Carte)"
+                    )}
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => startPayment("paypal")}
+                    disabled={loading !== null}
+                    className="w-full py-4 px-8 text-lg font-display font-semibold bg-[#0070ba] hover:bg-[#005ea6] text-white rounded-lg shadow-md transition-all disabled:opacity-60"
+                  >
+                    {loading === "paypal" ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Redirection...
+                      </span>
+                    ) : (
+                      "Payer avec PayPal (international)"
                     )}
                   </motion.button>
 
                   <p className="text-center text-muted-foreground text-sm mt-3">
-                    Paiement sécurisé via PayPal · Carte bancaire acceptée
+                    Paiement 100% sécurisé · Mobile Money, Wave, carte bancaire ou PayPal
                   </p>
-
-
                 </div>
               </div>
             </div>
